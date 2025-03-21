@@ -2,6 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://fleurkernevez.github.io/integration-deploiement/",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -15,8 +16,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test  --coverage  --watchAll --collectCoverageFrom=!src/reportWebVitals.js  --collectCoverageFrom=!src/index.js --collectCoverageFrom=!src/logo.svg",
-    "eject": "react-scripts eject"
+    "test": "react-scripts test  --coverage  --watchAll=false --collectCoverageFrom=!src/reportWebVitals.js  --collectCoverageFrom=!src/index.js --collectCoverageFrom=!src/logo.svg",
+    "eject": "react-scripts eject",
+    "predeploy" : "npm run build",
+    "deploy" : "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -37,6 +40,7 @@
     ]
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "react-test-renderer": "^19.0.0"
   }
 }
