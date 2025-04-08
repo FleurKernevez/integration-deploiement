@@ -50,12 +50,12 @@ jobs:
 
           if [ "$publishedVersion" = "$currentVersion" ]; then
             echo "Version has not changed"
-            echo "Version changed: false" >> $GITHUB_ENV
+            echo "Version changed=false" >> $GITHUB_ENV
           else
             echo "Version has changed"
-            echo "Version changed: true" >> $GITHUB_ENV
+            echo "Version changed=true" >> $GITHUB_ENV
           fi
-          
+
      - name: Push to GitHub Pages
        if: env.versionChanged == 'true'
        run: npm run build-npm
