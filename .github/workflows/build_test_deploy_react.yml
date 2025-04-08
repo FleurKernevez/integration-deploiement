@@ -42,8 +42,8 @@ jobs:
        uses: actions/configure-pages@v3
      - name: CheckVersion
        run: |
-          publishedVersion = $ (npm view fleur-web-dev version)
-          currentVersion = $ (npm view @fleur-web-dev/fleur-web-dev version)
+          publishedVersion=$(npm view fleur-web-dev version)
+          currentVersion=$(npm view @fleur-web-dev/fleur-web-dev version)
 
           echo "Published version: $publishedVersion"
           echo "Current version: $currentVersion"
@@ -58,6 +58,7 @@ jobs:
      - name: Push to GitHub Pages
        if: env.versionChanged == 'true'
        run: npm run build-npm
+
      - name: Upload artifact
        uses: actions/upload-pages-artifact@v3
        with:
