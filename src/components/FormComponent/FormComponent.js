@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { validateName, validateEmail, validateDateOfBirth, validatePostalCode } from './FormComponent-tests';
-
+import { validateName, validateEmail, validateDateOfBirth, validatePostalCode } from '../../services/CheckForm/CheckForm';
+import './FormComponent.css';
 
 const FormComponent = () => {
   const [formData, setFormData] = useState({
@@ -44,7 +44,7 @@ const FormComponent = () => {
         errorMessage = validateEmail(value) ? '' : 'Email invalide';
         break;
       case 'dateOfBirth':
-        errorMessage = validateDateOfBirth(value) ? '' : 'Doit avoir plus de 18 ans';
+        errorMessage = validateDateOfBirth(value) ? '' : "La date doit être valide et l'utilisateur majeur";
         break;
       case 'postalCode':
         errorMessage = validatePostalCode(value) ? '' : 'Code postal invalide';
@@ -96,33 +96,32 @@ const FormComponent = () => {
   };
 
   return (
-  <div className="flex justify-center items-center min-h-screen bg-gray-100">
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-lg w-96">
-      <h2 className="text-2xl font-semibold text-center mb-4">Inscription</h2>
-      {['firstName', 'lastName', 'email', 'dateOfBirth', 'city', 'postalCode'].map((field) => (
-        <div key={field} className="mb-4">
-          <input
-            type={field === 'email' ? 'email' : field === 'dateOfBirth' ? 'date' : 'text'}
-            name={field}
-            value={formData[field]}
-            onChange={handleInputChange}
-            placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {formErrors[field] && <span className="text-red-500 text-sm">{formErrors[field]}</span>}
-        </div>
-      ))}
-      <button 
-        type="submit" 
-        disabled={!isFormValid} 
-        className={`w-full p-2 text-white font-semibold rounded-lg ${isFormValid ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 cursor-not-allowed'}`}
-        onClick={handleSubmit}
-      >
-        Enregistrer
-      </button>
-    </form>
-  </div>
-  
+    <div className="form-container">
+      <form onSubmit={handleSubmit} className="custom-form">
+        <h2 className="form-title">Inscription</h2>
+        {['firstName', 'lastName', 'email', 'dateOfBirth', 'city', 'postalCode'].map((field) => (
+          <div key={field} className="form-field">
+            <input
+              type={field === 'email' ? 'email' : field === 'dateOfBirth' ? 'date' : 'text'}
+              name={field}
+              value={formData[field]}
+              onChange={handleInputChange}
+              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+              className="form-input"
+            />
+            {formErrors[field] && <span className="error-message">{formErrors[field]}</span>}
+          </div>
+        ))}
+        <button 
+          type="submit" 
+          disabled={!isFormValid} 
+          className={`submit-button ${isFormValid ? 'valid' : 'disabled'}`}
+          onClick={handleSubmit}
+        >
+          Enregistrer
+        </button>
+      </form>
+    </div>
   );
 };
 
