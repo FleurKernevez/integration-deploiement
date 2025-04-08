@@ -43,7 +43,7 @@ jobs:
      - name: CheckVersion
        run: |
           publishedVersion=$(npm view fleur-web-dev version)
-          currentVersion=$(npm view @fleur-web-dev/fleur-web-dev version)
+          currentVersion=$(jq -r '.version' package.json)
 
           echo "Published version: $publishedVersion"
           echo "Current version: $currentVersion"
