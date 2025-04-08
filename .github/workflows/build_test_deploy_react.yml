@@ -40,6 +40,22 @@ jobs:
      - name: Setup Pages
        id: pages
        uses: actions/configure-pages@v3
+     - name: CheckVersion
+       run: |
+          $publishedVersion : npm view fleur-web-dev
+          $currentVersion : npm view @fleur-web-dev/fleur-web-dev
+          if ($publishedVersion -eq $currentVersion) {
+            $versionChanged = "false"
+          } else {
+            $versionChanged = "true"
+          }
+     - name: Push to GitHub Pages
+       run: |
+          if ($versionChanged) {
+          run npm run build-npm
+          } else {
+            echo "No changes to deploy"
+          }
      - name: Upload artifact
        uses: actions/upload-pages-artifact@v3
        with:

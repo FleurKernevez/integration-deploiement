@@ -1,7 +1,7 @@
 {
-  "name": "my-app",
+  "name": "fleur-web-dev",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "homepage": "https://fleurkernevez.github.io/integration-deploiement/",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -20,7 +20,8 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "jsdoc": "jsdoc -R ./README.md -c ./jsdoc.config.json -r -d ./docs"
+    "jsdoc": "jsdoc -R ./README.md -c ./jsdoc.config.json -r -d ./docs",
+    "build-npm": "NODE_ENV=production && rm -rf dist && mkdir dist && npx babel src --out-dir dist --copy-files"  
   },
   "eslintConfig": {
     "extends": [
@@ -41,6 +42,9 @@
     ]
   },
   "devDependencies": {
+    "@babel/cli": "^7.27.0",
+    "@babel/core": "^7.26.10",
+    "@babel/plugin-transform-react-jsx": "^7.25.9",
     "autoprefixer": "^10.4.21",
     "gh-pages": "^6.3.0",
     "jsdoc": "^4.0.4",
