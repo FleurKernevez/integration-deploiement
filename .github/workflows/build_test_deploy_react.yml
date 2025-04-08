@@ -42,20 +42,22 @@ jobs:
        uses: actions/configure-pages@v3
      - name: CheckVersion
        run: |
-          $publishedVersion : npm view fleur-web-dev
-          $currentVersion : npm view @fleur-web-dev/fleur-web-dev
-          if ($publishedVersion -eq $currentVersion) {
-            $versionChanged = "false"
-          } else {
-            $versionChanged = "true"
-          }
+          publishedVersion = $ (npm view fleur-web-dev version)
+          currentVersion = $ (npm view @fleur-web-dev/fleur-web-dev version)
+
+          echo "Published version: $publishedVersion"
+          echo "Current version: $currentVersion"
+
+          if [ "$publishedVersion" = "$currentVersion" ]; then
+            echo "Version has not changed"
+            echo "Version changed: false" >> $GITHUB_ENV
+          else
+            echo "Version has changed"
+            echo "Version changed: true" >> $GITHUB_ENV
+       
      - name: Push to GitHub Pages
-       run: |
-          if ($versionChanged) {
-          run npm run build-npm
-          } else {
-            echo "No changes to deploy"
-          }
+       if: env.versionChanged == 'true'
+       run: npm run build-npm
      - name: Upload artifact
        uses: actions/upload-pages-artifact@v3
        with:
