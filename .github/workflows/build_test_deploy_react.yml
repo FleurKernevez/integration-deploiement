@@ -54,7 +54,8 @@ jobs:
           else
             echo "Version has changed"
             echo "Version changed: true" >> $GITHUB_ENV
-       
+          fi
+          
      - name: Push to GitHub Pages
        if: env.versionChanged == 'true'
        run: npm run build-npm
