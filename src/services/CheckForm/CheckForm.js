@@ -12,7 +12,7 @@ export const validateName = (name) => {
   export const validateDateOfBirth = (dateOfBirth) => {
     const birthDate = new Date(dateOfBirth);
     if (isNaN(birthDate)) {
-      return false; // Date invalide
+      return false;
     }
   
     const today = new Date();

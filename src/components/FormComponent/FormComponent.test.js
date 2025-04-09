@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor  } from '@testing-library/react';
 import FormComponent from './FormComponent';
 
-describe('Button', () => {
+describe('Bouton activé/désactivé', () => {
   it('devrait désactiver le bouton si les champs ne sont pas tous remplis', () => {
     render(<FormComponent />);
 
@@ -43,7 +43,7 @@ describe('Button', () => {
   });
 });
 
-describe('Toaster', () => {
+describe('Toaster de succès', () => {
   it('devrait afficher un toaster de succès et vider les champs après la soumission', async () => {
 
     // Mock de la fonction alert
@@ -87,7 +87,7 @@ describe('Toaster', () => {
   });
 });
 
-/* describe('Formulaire', () => {
+describe('Formulaire', () => {
   it('devrait afficher les erreurs en rouge si les champs sont invalides', async () => {
 
     render(<FormComponent />);
@@ -111,5 +111,5 @@ describe('Toaster', () => {
     expect(nameError).toHaveStyle('color: red');
     expect(emailError).toHaveStyle('color:red');
   });
-}); */
+});
 

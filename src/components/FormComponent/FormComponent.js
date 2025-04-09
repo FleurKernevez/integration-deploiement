@@ -126,7 +126,7 @@ const FormComponent = () => {
               placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
               className="form-input"
             />
-            {formErrors[field] && <span className="error-message">{formErrors[field]}</span>}
+            {formErrors[field] && <span className="error-message" style={{ color: 'red' }}>{formErrors[field]}</span>}
           </div>
         ))}
         <button 
