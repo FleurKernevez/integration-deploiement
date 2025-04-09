@@ -21,6 +21,15 @@ const FormComponent = () => {
     postalCode: '',
   });
 
+  const fieldLabels = {
+    firstName: 'Prénom',
+    lastName: 'Nom',
+    email: 'Email',
+    dateOfBirth: 'Date de naissance',
+    city: 'Ville',
+    postalCode: 'Code postal',
+  };
+
   const [isFormValid, setIsFormValid] = useState(false);
 
   const handleInputChange = (e) => {
@@ -36,9 +45,13 @@ const FormComponent = () => {
     let errorMessage = '';
     switch (fieldName) {
       case 'firstName':
+        errorMessage = validateName(value) ? '' : 'Prénom invalide';
+        break;
       case 'lastName':
-      case 'city':
         errorMessage = validateName(value) ? '' : 'Nom invalide';
+        break;
+      case 'city':
+        errorMessage = validateName(value) ? '' : 'Nom de ville invalide';
         break;
       case 'email':
         errorMessage = validateEmail(value) ? '' : 'Email invalide';
@@ -101,8 +114,12 @@ const FormComponent = () => {
         <h2 className="form-title">Inscription</h2>
         {['firstName', 'lastName', 'email', 'dateOfBirth', 'city', 'postalCode'].map((field) => (
           <div key={field} className="form-field">
+            <label htmlFor={field} className="form-label">
+              {fieldLabels[field]}
+            </label>
             <input
               type={field === 'email' ? 'email' : field === 'dateOfBirth' ? 'date' : 'text'}
+              id={field}
               name={field}
               value={formData[field]}
               onChange={handleInputChange}

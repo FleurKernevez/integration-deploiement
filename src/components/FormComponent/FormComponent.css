@@ -18,6 +18,10 @@
   flex-direction: column;
 }
 
+.form-label{
+  display: block;
+}
+
 .form-title {
   font-size: 24px;
   font-weight: 600;
@@ -48,7 +52,7 @@
 
 .error-message {
   display: block;
-  color: #e53e3e;
+  color: red;
   font-size: 14px;
   margin-top: 6px; 
   width: 100%;
