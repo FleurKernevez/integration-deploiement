@@ -54,11 +54,16 @@ jobs:
             echo "Version has changed"
             echo "Version changed=true" >> $GITHUB_ENV
           fi
-
      - name: Push to GitHub Pages
        if: env.versionChanged == 'true'
        run: npm run build-npm
-
+     - name: Build and publish on npm
+       if: env.versionChanged == 'true'
+       run: |
+        git config --global user.email "fleur.kernevez@outlook.fr"
+        git config --global user.name "fleurk"
+        npm run build-npm
+        npm publish
      - name: Upload artifact
        uses: actions/upload-pages-artifact@v3
        with:
