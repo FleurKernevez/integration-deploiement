@@ -54,16 +54,17 @@ jobs:
             echo "Version has changed"
             echo "VERSIONCHANGED=true" >> $GITHUB_ENV
           fi
-     - name: Debug VERSIONCHANGED
-       run: echo "VERSIONCHANGED is $VERSIONCHANGED"
      - name: Push to GitHub Pages
        if: env.VERSIONCHANGED == 'true'
        run: npm run build-npm
+     - name: Authenticate with npm
+       run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
      - name: Build and publish on npm
        if: env.VERSIONCHANGED == 'true'
        run: |
         git config --global user.email "fleur.kernevez@ynov.com"
         git config --global user.name "fleurk"
+        echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
         npm run build-npm
         npm publish
      - name: Upload artifact
