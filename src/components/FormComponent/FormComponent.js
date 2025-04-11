@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { validateName, validateEmail, validateDateOfBirth, validatePostalCode } from '../../services/CheckForm/CheckForm';
 import './FormComponent.css';
 
 const FormComponent = () => {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     firstName: '',
     lastName: '',
     email: '',
     dateOfBirth: '',
     city: '',
     postalCode: '',
-  });
+  };
 
-  const [formErrors, setFormErrors] = useState({
+  const initialFormErrors = {
     firstName: '',
     lastName: '',
     email: '',
     dateOfBirth: '',
     city: '',
     postalCode: '',
-  });
+  };
 
   const fieldLabels = {
     firstName: 'Prénom',
@@ -30,7 +30,26 @@ const FormComponent = () => {
     postalCode: 'Code postal',
   };
 
+  const [formData, setFormData] = useState(initialFormData);
+  const [formErrors, setFormErrors] = useState(initialFormErrors);
   const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    const storedFormData = localStorage.getItem('formData');
+    if (storedFormData) {
+      const parsedData = JSON.parse(storedFormData);
+      if (parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)) {
+        setFormData({
+          firstName: parsedData.firstName || '',
+          lastName: parsedData.lastName || '',
+          email: parsedData.email || '',
+          dateOfBirth: parsedData.dateOfBirth || '',
+          city: parsedData.city || '',
+          postalCode: parsedData.postalCode || '',
+        });
+      }
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,25 +105,23 @@ const FormComponent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Données du formulaire :", formData);
     if (isFormValid) {
-      alert('Utilisateur enregistré avec succès!');
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        dateOfBirth: '',
-        city: '',
-        postalCode: '',
-      });
-      setFormErrors({
-        firstName: '',
-        lastName: '',
-        email: '',
-        dateOfBirth: '',
-        city: '',
-        postalCode: '',
-      });
+
+      const storedUsers = JSON.parse(localStorage.getItem('formData')) || [];
+      const userExists = storedUsers.some(user => user.email === formData.email);
+
+      if (!userExists) {
+        const updatedUsers = [...storedUsers, formData];
+        localStorage.setItem('formData', JSON.stringify(updatedUsers));
+        alert('Utilisateur enregistré avec succès!');
+      } else {
+        alert("L'utilisateur existe déjà.");
+      }
+
+      window.dispatchEvent(new Event('userAdded'));
+
+      setFormData(initialFormData);
+      setFormErrors(initialFormErrors);
     }
   };
 
@@ -123,7 +140,7 @@ const FormComponent = () => {
               name={field}
               value={formData[field]}
               onChange={handleInputChange}
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+              placeholder={fieldLabels[field]}
               className="form-input"
             />
             {formErrors[field] && <span className="error-message" style={{ color: 'red' }}>{formErrors[field]}</span>}
@@ -133,7 +150,6 @@ const FormComponent = () => {
           type="submit" 
           disabled={!isFormValid} 
           className={`submit-button ${isFormValid ? 'valid' : 'disabled'}`}
-          onClick={handleSubmit}
         >
           Enregistrer
         </button>
