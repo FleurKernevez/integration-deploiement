@@ -54,6 +54,10 @@ jobs:
             echo "Version has changed"
             echo "VersionChanged=true" >> $GITHUB_ENV
           fi
+     - name: Debug VersionChanged in maj
+       run: echo "VERSIONCHANGED is $VERSIONCHANGED"
+     - name: Debug VersionChanged in min
+       run: echo "versionChanged is $versionChanged"
      - name: Push to GitHub Pages
        if: env.VERSIONCHANGED == 'true'
        run: npm run build-npm
