@@ -49,22 +49,20 @@ jobs:
 
           if [ "$publishedVersion" = "$currentVersion" ]; then
             echo "Version has not changed"
-            echo "VersionChanged=false" >> $GITHUB_ENV
+            echo "VERSIONCHANGED=false" >> $GITHUB_ENV
           else
             echo "Version has changed"
-            echo "VersionChanged=true" >> $GITHUB_ENV
+            echo "VERSIONCHANGED=true" >> $GITHUB_ENV
           fi
-     - name: Debug VersionChanged in maj
+     - name: Debug VERSIONCHANGED
        run: echo "VERSIONCHANGED is $VERSIONCHANGED"
-     - name: Debug VersionChanged in min
-       run: echo "versionChanged is $versionChanged"
      - name: Push to GitHub Pages
        if: env.VERSIONCHANGED == 'true'
        run: npm run build-npm
      - name: Build and publish on npm
        if: env.VERSIONCHANGED == 'true'
        run: |
-        git config --global user.email "fleur.kernevez@outlook.fr"
+        git config --global user.email "fleur.kernevez@ynov.com"
         git config --global user.name "fleurk"
         npm run build-npm
         npm publish
