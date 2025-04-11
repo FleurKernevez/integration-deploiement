@@ -55,10 +55,10 @@ jobs:
             echo "VersionChanged=true" >> $GITHUB_ENV
           fi
      - name: Push to GitHub Pages
-       if: env.versionChanged == 'true'
+       if: env.VERSIONCHANGED == 'true'
        run: npm run build-npm
      - name: Build and publish on npm
-       if: env.versionChanged == 'true'
+       if: env.VERSIONCHANGED == 'true'
        run: |
         git config --global user.email "fleur.kernevez@outlook.fr"
         git config --global user.name "fleurk"
