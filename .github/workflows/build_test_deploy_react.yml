@@ -67,6 +67,12 @@ jobs:
         echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
         npm run build-npm
         npm publish
+     - name: Build the stack
+       run: docker-compose up -d
+     - name: Run e2e tests with cypress
+       uses: cypress-io/github-action@v6
+     - name: stop the stack
+       run: docker-compose down
      - name: Upload artifact
        uses: actions/upload-pages-artifact@v3
        with:

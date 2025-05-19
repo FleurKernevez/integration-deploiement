@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { validateName, validateEmail, validateDateOfBirth, validatePostalCode } from '../../services/CheckForm/CheckForm';
 import './FormComponent.css';
 
@@ -103,25 +104,39 @@ const FormComponent = () => {
     setIsFormValid(isValid);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
     if (isFormValid) {
+      const user = {
+        nom: formData.lastName,
+        prenom: formData.firstName,
+        email: formData.email,
+        dateDeNaissance: formData.dateOfBirth,
+        ville: formData.city,
+        codePostal: formData.postalCode,
+      };
 
-      const storedUsers = JSON.parse(localStorage.getItem('formData')) || [];
-      const userExists = storedUsers.some(user => user.email === formData.email);
+      try {
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/users`, user, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-      if (!userExists) {
-        const updatedUsers = [...storedUsers, formData];
-        localStorage.setItem('formData', JSON.stringify(updatedUsers));
-        alert('Utilisateur enregistré avec succès!');
-      } else {
-        alert("L'utilisateur existe déjà.");
+        if (response.status === 200) {
+          localStorage.setItem('formData', JSON.stringify(formData));
+          alert('Utilisateur enregistré avec succès!');
+          window.dispatchEvent(new Event('userAdded'));
+          setFormData(initialFormData);
+          setFormErrors(initialFormErrors);
+        } else {
+          throw new Error('Échec de la création de l\'utilisateur.');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la création de l\'utilisateur :', error);
+        alert('Erreur lors de l\'enregistrement de l\'utilisateur.');
       }
-
-      window.dispatchEvent(new Event('userAdded'));
-
-      setFormData(initialFormData);
-      setFormErrors(initialFormErrors);
     }
   };
 

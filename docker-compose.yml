@@ -1,0 +1,63 @@
+version: 'version: 3.1'
+
+services:
+
+  db:
+    image: mysql:9.2
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD
+    ports:
+      - 3306:3306
+    volumes:
+      - ./sqlfiles:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: mysqladmin ping -h localhost
+      timeout: 1m
+
+  adminer:
+    depends_on:
+      - db  
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+  server:
+    restart: always
+    image: python-api-2
+    volumes:
+      - ./server:/server
+    build: 
+      context: .
+      dockerfile: ./server/Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_ROOT_PASSWORD
+      - PORT=8000
+    depends_on:
+      db:
+        condition: service_healthy
+    command: uvicorn server:app --proxy-headers --host 0.0.0.0 --port 8000
+
+  react:
+    restart: always
+    image: react
+    build:
+      context: .
+      dockerfile: ./DockerfileReact
+    ports:
+      - 3000:3000
+    environment:
+      - REACT_APP_SERVER_URL=http://localhost:8000
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/server
+    command: npm start
+    depends_on:
+      - server
