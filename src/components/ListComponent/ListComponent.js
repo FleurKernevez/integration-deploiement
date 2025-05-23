@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+/* import axios from 'axios'; */
 import './ListComponent.css';
 
 const ListComponent = () => {
-  const [registeredUsers, setRegisteredUsers] = useState([]);
+/*   const [registeredUsers, setRegisteredUsers] = useState([]); */
   const [usersCount, setUsersCount] = useState([]);
 
 /*   const loadUsers = () => {
@@ -63,7 +63,7 @@ const ListComponent = () => {
       <p> {usersCount} user(s) already registered</p>
       <h2 className="registered-list-title">Liste des inscrits</h2>
       <ul className="list-none p-0">
-        {registeredUsers.length > 0 ? (
+ {/*        {registeredUsers.length > 0 ? (
           registeredUsers.map((user, index) => (
             <li key={index} className="registered-item">
               <div className="registered-item-text">
@@ -78,7 +78,7 @@ const ListComponent = () => {
           <li className="registered-item">
             <div className="registered-item-text">Aucun utilisateur enregistré.</div>
           </li>
-        )}
+        )} */}
       </ul>
     </div>
   );
