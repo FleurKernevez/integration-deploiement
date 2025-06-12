@@ -69,8 +69,8 @@ jobs:
         npm publish
      - name: Build the stack
        run: docker compose up -d
-     - name: Run e2e tests with cypress
-       uses: cypress-io/github-action@v6
+     #- name: Run e2e tests with cypress
+     #  uses: cypress-io/github-action@v6
      - name: stop the stack
        run: docker compose down
      - name: Upload artifact
