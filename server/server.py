@@ -70,6 +70,33 @@ async def create_user(login: Login):
     else:
         raise Exception("Bad credentials")
 
+@app.get("/login")
+async def test_login(email: str, password: str):
+    print(f"Tentative de connexion GET - Email: {email}, Mot de passe: {password}")
+
+    try:
+        conn = mysql.connector.connect(
+            database=os.getenv("MYSQL_DATABASE"),
+            user=os.getenv("MYSQL_USER"),
+            password=os.getenv("MYSQL_ROOT_PASSWORD"),
+            port=3306,
+            host=os.getenv("MYSQL_HOST")
+        )
+        cursor = conn.cursor()
+
+        sql = "SELECT * FROM admin WHERE email = %s AND password = %s"
+        cursor.execute(sql, (email, password))
+        records = cursor.fetchall()
+
+        if records:
+            return {"message": "Connexion réussie", "admin": email}
+        else:
+            return {"message": "Identifiants incorrects"}
+
+    except Exception as e:
+        print("Erreur GET /login :", e)
+        return {"error": str(e)}
+
 @app.post("/users")
 async def create_user(user: dict):
     conn = mysql.connector.connect(
