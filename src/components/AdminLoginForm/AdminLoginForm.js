@@ -77,7 +77,7 @@ const AdminLoginForm = () => {
     if (isLoginValid) {
         try {
         console.log('Tentative login avec :', loginData);
-        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/login`, loginData, {
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/admin`, loginData, {
             headers: {
             'Content-Type': 'application/json',
             },

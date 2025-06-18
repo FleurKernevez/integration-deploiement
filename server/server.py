@@ -48,7 +48,7 @@ async def get_users():
         print("An exception occurred")
     # Connexion à la base de données
 
-@app.post("/login")
+@app.post("/admin")
 async def create_user(login: Login):
     print("Reçu :", login.email, login.password)
     conn = mysql.connector.connect(
@@ -70,7 +70,7 @@ async def create_user(login: Login):
     else:
         raise Exception("Bad credentials")
 
-@app.get("/login")
+@app.get("/admin")
 async def test_login(email: str, password: str):
     print(f"Tentative de connexion GET - Email: {email}, Mot de passe: {password}")
 
