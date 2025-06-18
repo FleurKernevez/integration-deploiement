@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { validateName, validateEmail, validateDateOfBirth, validatePostalCode } from '../../services/CheckForm/CheckForm';
 import './FormComponent.css';
+import { v4 as uuidv4 } from 'uuid';
 
 const FormComponent = () => {
   const initialFormData = {
@@ -109,6 +110,7 @@ const FormComponent = () => {
 
     if (isFormValid) {
       const user = {
+        id: uuidv4(),
         nom: formData.lastName,
         prenom: formData.firstName,
         email: formData.email,
