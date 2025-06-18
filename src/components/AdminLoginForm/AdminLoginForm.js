@@ -47,7 +47,7 @@ const AdminLoginForm = () => {
     setIsLoginValid(isValid);
   };
 
-  const handleLogin = async (e) => {
+/*   const handleLogin = async (e) => {
     e.preventDefault();
 
     if (isLoginValid) {
@@ -69,7 +69,34 @@ const AdminLoginForm = () => {
         alert("Échec de l'authentification. Vérifiez vos identifiants.");
       }
     }
-  };
+  }; */
+
+    const handleLogin = async (e) => {
+    e.preventDefault();
+
+    if (isLoginValid) {
+        try {
+        console.log('Tentative login avec :', loginData);
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/login`, loginData, {
+            headers: {
+            'Content-Type': 'application/json',
+            },
+        });
+
+        const token = response.data;
+        console.log(response.data)
+
+        localStorage.setItem('adminToken', token);
+        alert('Connexion réussie !');
+        window.location.reload(); 
+
+        } catch (error) {
+        console.error('Erreur de connexion :', error);
+        alert("Échec de l'authentification. Vérifie ton email ou ton mot de passe.");
+        }
+    }
+    };
+
 
   return (
     <div className="form-container">

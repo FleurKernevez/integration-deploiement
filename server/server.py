@@ -1,7 +1,11 @@
 import mysql.connector
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Header, HTTPException, status
+from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
+import jwt
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
+from pydantic import BaseModel
 
 app = FastAPI()
 origins = ["*"]
@@ -13,6 +17,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+class Login(BaseModel):
+    email: str
+    password: str
 
 @app.get("/")
 async def hello():
@@ -42,6 +50,7 @@ async def get_users():
 
 @app.post("/login")
 async def create_user(login: Login):
+    print("Reçu :", login.email, login.password)
     conn = mysql.connector.connect(
         database=os.getenv("MYSQL_DATABASE"),
         user=os.getenv("MYSQL_USER"),
@@ -75,3 +84,33 @@ async def create_user(user: dict):
     cursor.execute(sql_insert_Query, values)
     conn.commit()
     return {'message': 'User created successfully', 'user_id': cursor.lastrowid}
+
+@app.delete("/users")
+async def deleteUser(id: str, authorization: Optional[str] = Header(None)):
+    if authorization is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authorization header missing",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization scheme. Must be 'Bearer'.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    token = authorization.split(" ")[1]
+    try:
+        # Décoder le jeton. PyJWT vérifie automatiquement la signature et l'expiration.
+        decoded_payload = jwt.decode(token, MY_SECRET, algorithms=[ALGORITHM])
+        ##TODO delete user whith id
+        return True
+    except ExpiredSignatureError:
+        print("Erreur : Le jeton JWT a expiré.")
+        raise Exception("Bad credentials")
+    except InvalidTokenError as e:
+        print(f"Erreur : Le jeton JWT est invalide : {e}")
+        raise Exception("Bad credentials")
+    except Exception as e:
+        print(f"Une erreur inattendue est survenue lors de la vérification du jeton : {e}")
+        raise Exception("Bad credentials")
