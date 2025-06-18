@@ -23,26 +23,6 @@ services:
     ports:
       - "8080:8080"
 
-  migrator:
-    image: mysql:8.0
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - ./sqlfiles:/docker-entrypoint-initdb.d
-    command: >
-      sh -c "
-      echo 'Attente de MySQL...' &&
-      sleep 10 &&
-      echo 'Exécution des scripts SQL...' &&
-      for file in /docker-entrypoint-initdb.d/*.sql; do
-        echo 'Fichier : ' \$file;
-        mysql -h db -u root -proot ynov_ci < \$file;
-      done &&
-      echo 'Migrations terminées.'
-      "
-    restart: "no"
-
   server:
     restart: always
     image: python-api-2
