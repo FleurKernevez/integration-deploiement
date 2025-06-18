@@ -7,3 +7,4 @@ CREATE TABLE admin
 );
 INSERT INTO admin (email, password) VALUES ("loise.fenoll@ynov.com", "PvdrTAzTeR247sDnAZBr");
 DESCRIBE admin;
+
