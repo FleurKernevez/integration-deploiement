@@ -94,7 +94,7 @@ async def test_login(email: str, password: str):
             return {"message": "Identifiants incorrects"}
 
     except Exception as e:
-        print("Erreur GET /login :", e)
+        print("Erreur GET /admin :", e)
         return {"error": str(e)}
 
 @app.post("/users")

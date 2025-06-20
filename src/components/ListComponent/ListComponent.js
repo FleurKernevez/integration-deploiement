@@ -1,61 +1,51 @@
 import React, { useEffect, useState } from 'react';
-/* import axios from 'axios'; */
 import './ListComponent.css';
 
 const ListComponent = () => {
-/*   const [registeredUsers, setRegisteredUsers] = useState([]); */
+  const [registeredUsers, setRegisteredUsers] = useState([]);
   const [usersCount, setUsersCount] = useState([]);
-
-/*   const loadUsers = () => {
-    const storedData = localStorage.getItem('formData');
-    if (storedData) {
-      setRegisteredUsers(JSON.parse(storedData));
-    } else {
-      setRegisteredUsers([]);
-    }
-  }; */
-/* 
-  const loadUsers = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/users`);
-      if (response.status === 200) {
-        setRegisteredUsers(response.data);
-      } else {
-        setRegisteredUsers([]);
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des utilisateurs:', error);
-      setRegisteredUsers([]);
-    }
-  }; */
-
-  useEffect(() => {
-/*     loadUsers();
-
-    const handleUserAdded = () => {
-      loadUsers();
-    }; */
-/* 
-    window.addEventListener('userAdded', handleUserAdded);
-
-    return () => {
-      window.removeEventListener('userAdded', handleUserAdded);
-    }; */
-  }, []);
 
   useEffect(() => {
     const getUsers = async () => {
-      console.log(process.env);
       const fetchData = await fetch(`${process.env.REACT_APP_SERVER_URL}/users`)
       const data = await fetchData.json();
       const response = data.utilisateurs;
-      console.log('response', response);
-      console.log('response.length', response.length);
       setUsersCount(response.length);
+
+      const formattedUsers = response.map(userArray => ({
+        id: userArray[0],
+        lastName: userArray[1],
+        firstName: userArray[2],
+        email: userArray[3],
+        dateOfBirth: userArray[4],
+        postalCode: userArray[5],
+        city: userArray[6],
+    }));
+
+      setRegisteredUsers(formattedUsers)
     }
     getUsers();
   }
   , []);
+
+  const handleDeleteUser = async (id) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('Utilisateur supprimé avec succès !');
+        setRegisteredUsers(prevUsers => prevUsers.filter(user => user.id !== id));
+        setUsersCount(prevCount => prevCount - 1);
+      } else {
+        throw new Error('La suppression a échoué.');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la suppression :', error);
+      alert('Erreur lors de la suppression de l’utilisateur.');
+    }
+  };
 
   return (
     <div className="registered-list">
@@ -63,7 +53,7 @@ const ListComponent = () => {
       <p> {usersCount} user(s) already registered</p>
       <h2 className="registered-list-title">Liste des inscrits</h2>
       <ul className="list-none p-0">
- {/*        {registeredUsers.length > 0 ? (
+        {registeredUsers.length > 0 ? (
           registeredUsers.map((user, index) => (
             <li key={index} className="registered-item">
               <div className="registered-item-text">
@@ -72,13 +62,22 @@ const ListComponent = () => {
               <div className="registered-item-text">
                 {`Né(e) le ${user.dateOfBirth} - ${user.city} (${user.postalCode})`}
               </div>
+              <div className="registered-item-text">
+                {`id: ${user.id}`}
+              </div>
+              <button 
+                className="registered-item-text"
+                onClick={() => handleDeleteUser(user.id)}
+              >
+                {`Supprimer ${user.firstName} ${user.lastName}`}
+              </button>
             </li>
           ))
         ) : (
           <li className="registered-item">
             <div className="registered-item-text">Aucun utilisateur enregistré.</div>
           </li>
-        )} */}
+        )}
       </ul>
     </div>
   );

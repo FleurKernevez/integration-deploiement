@@ -47,37 +47,13 @@ const AdminLoginForm = () => {
     setIsLoginValid(isValid);
   };
 
-/*   const handleLogin = async (e) => {
-    e.preventDefault();
-
-    if (isLoginValid) {
-      try {
-        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/admin/login`, loginData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (response.status === 200) {
-          alert('Connexion réussie');
-          // TODO : rediriger l'admin ou stocker un token, etc.
-        } else {
-          throw new Error('Échec de la connexion.');
-        }
-      } catch (error) {
-        console.error('Erreur de connexion :', error);
-        alert("Échec de l'authentification. Vérifiez vos identifiants.");
-      }
-    }
-  }; */
-
     const handleLogin = async (e) => {
     e.preventDefault();
 
     if (isLoginValid) {
         try {
         console.log('Tentative login avec :', loginData);
-        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/admin`, loginData, {
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/login`, loginData, {
             headers: {
             'Content-Type': 'application/json',
             },
