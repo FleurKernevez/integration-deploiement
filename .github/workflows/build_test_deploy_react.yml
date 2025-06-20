@@ -71,6 +71,8 @@ jobs:
        run: docker compose up -d
      #- name: Run e2e tests with cypress
      #  uses: cypress-io/github-action@v6
+     - name: Trigger Vercel Deploy Hook
+       run: curl -X POST ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
      - name: stop the stack
        run: docker compose down
      - name: Upload artifact
