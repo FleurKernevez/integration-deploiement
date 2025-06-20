@@ -48,7 +48,7 @@ async def get_users():
         print("An exception occurred")
     # Connexion à la base de données
 
-@app.post("/admin")
+@app.post("/login")
 async def create_user(login: Login):
     print("Reçu :", login.email, login.password)
     conn = mysql.connector.connect(
@@ -70,10 +70,8 @@ async def create_user(login: Login):
     else:
         raise Exception("Bad credentials")
 
-@app.get("/admin")
-async def test_login(email: str, password: str):
-    print(f"Tentative de connexion GET - Email: {email}, Mot de passe: {password}")
-
+@app.get("/admins")
+async def get_admins():
     try:
         conn = mysql.connector.connect(
             database=os.getenv("MYSQL_DATABASE"),
@@ -83,19 +81,13 @@ async def test_login(email: str, password: str):
             host=os.getenv("MYSQL_HOST")
         )
         cursor = conn.cursor()
-
-        sql = "SELECT * FROM admin WHERE email = %s AND password = %s"
-        cursor.execute(sql, (email, password))
+        cursor.execute("SELECT * FROM admin")
         records = cursor.fetchall()
-
-        if records:
-            return {"message": "Connexion réussie", "admin": email}
-        else:
-            return {"message": "Identifiants incorrects"}
-
+        return {"admins": records}
     except Exception as e:
-        print("Erreur GET /admin :", e)
-        return {"error": str(e)}
+        print("Erreur /admins :", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/users")
 async def create_user(user: dict):
