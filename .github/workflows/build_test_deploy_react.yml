@@ -69,6 +69,11 @@ jobs:
         npm publish
      - name: Build the stack
        run: docker compose up -d
+       env : 
+        REACT_APP_SERVER_URL: ${{ secrets.REACT_APP_SERVER_URL }}
+        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+        MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+        MYSQL_USER: ${{ secrets.MYSQL_USER }}
      #- name: Run e2e tests with cypress
      #  uses: cypress-io/github-action@v6
      - name: Trigger Vercel Deploy Hook
