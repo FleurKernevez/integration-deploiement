@@ -6,7 +6,11 @@ services:
     image: mysql:9.2
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD
+      - MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE: ${MYSQL_DATABASE}
+      - MYSQL_USER: ${MYSQL_USER}
+      - MYSQL_HOST: ${MYSQL_HOST}
+      - PORT=8000
     ports:
       - 3306:3306
     volumes:
@@ -34,10 +38,10 @@ services:
     ports:
       - 8000:8000
     environment:
-      - MYSQL_HOST=db
-      - MYSQL_DATABASE
-      - MYSQL_USER
-      - MYSQL_ROOT_PASSWORD
+      - MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE: ${MYSQL_DATABASE}
+      - MYSQL_USER: ${MYSQL_USER}
+      - MYSQL_HOST: ${MYSQL_HOST}
       - PORT=8000
     depends_on:
       db:
