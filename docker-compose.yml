@@ -14,9 +14,7 @@ services:
       - 3306:3306
     volumes:
       - ./sqlfiles:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: mysqladmin ping -h localhost
-      timeout: 1m
+
 
   adminer:
     depends_on:
@@ -42,9 +40,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_HOST=db 
       - PORT=8000
-    depends_on:
-      db:
-        condition: service_healthy
+
     command: uvicorn server:app --proxy-headers --host 0.0.0.0 --port 8000
 
   react:
