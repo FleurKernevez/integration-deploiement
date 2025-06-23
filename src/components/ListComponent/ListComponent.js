@@ -4,6 +4,8 @@ import './ListComponent.css';
 const ListComponent = () => {
   const [registeredUsers, setRegisteredUsers] = useState([]);
   const [usersCount, setUsersCount] = useState([]);
+  const isAdmin = !!localStorage.getItem('adminToken');
+
 
   useEffect(() => {
     const getUsers = async () => {
@@ -39,27 +41,33 @@ const ListComponent = () => {
   }
   , []);
 
+  const handleDeleteUser = async (userId, userName) => {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      alert("Vous devez être connecté en tant qu'administrateur.");
+      return;
+    }
 
-
-  const handleDeleteUser = async (id) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users?id=${userId}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {
         alert('Utilisateur supprimé avec succès !');
-        setRegisteredUsers(prevUsers => prevUsers.filter(user => user.id !== id));
-        setUsersCount(prevCount => prevCount - 1);
+        // Refresh ou remove from state
+        window.dispatchEvent(new Event("userAdded")); // ou re-fetch users
       } else {
-        throw new Error('La suppression a échoué.');
+        alert("Erreur lors de la suppression de l’utilisateur.");
       }
     } catch (error) {
-      console.error('Erreur lors de la suppression :', error);
-      alert('Erreur lors de la suppression de l’utilisateur.');
+      console.error("Erreur delete :", error);
+      alert("Erreur réseau lors de la suppression.");
     }
   };
-  
 
   return (
     <div className="registered-list">
@@ -79,13 +87,15 @@ const ListComponent = () => {
               <div className="registered-item-text">
                 {`id: ${user.id}`}
               </div>
-              <button
-                data-testid={`delete-${user.id}`}
-                className="registered-item-text"
-                onClick={() => handleDeleteUser(user.id)}
-              >
-                {`Supprimer ${user.firstName} ${user.lastName}`}
-              </button>
+              {isAdmin && (
+                <button
+                  data-testid={`delete-${user.id}`}
+                  className="registered-item-text"
+                  onClick={() => handleDeleteUser(user.id)}
+                >
+                  {`Supprimer ${user.firstName} ${user.lastName}`}
+                </button>
+              )}
             </li>
           ))
         ) : (

@@ -128,24 +128,52 @@ async def deleteUser(id: str, authorization: Optional[str] = Header(None)):
             detail="Authorization header missing",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     if not authorization.startswith("Bearer "):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authorization scheme. Must be 'Bearer'.",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     token = authorization.split(" ")[1]
+
     try:
-        # Décoder le jeton. PyJWT vérifie automatiquement la signature et l'expiration.
+        # Vérifie et décode le token
         decoded_payload = jwt.decode(token, MY_SECRET, algorithms=[ALGORITHM])
-        ##TODO delete user whith id
-        return True
+        email_admin = decoded_payload.get("email")
+
+        # Connexion DB
+        conn = mysql.connector.connect(
+            database=os.getenv("MYSQL_DATABASE"),
+            user=os.getenv("MYSQL_USER"),
+            password=os.getenv("MYSQL_ROOT_PASSWORD"),
+            port=3306,
+            host=os.getenv("MYSQL_HOST")
+        )
+        cursor = conn.cursor()
+
+        # Supprime l'utilisateur
+        delete_query = "DELETE FROM utilisateur WHERE id = %s"
+        cursor.execute(delete_query, (id,))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+
+        return {"message": f"Utilisateur {id} supprimé avec succès"}
+
     except ExpiredSignatureError:
-        print("Erreur : Le jeton JWT a expiré.")
-        raise Exception("Bad credentials")
-    except InvalidTokenError as e:
-        print(f"Erreur : Le jeton JWT est invalide : {e}")
-        raise Exception("Bad credentials")
+        raise HTTPException(status_code=401, detail="Token expiré")
+
+    except InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Token invalide")
+
     except Exception as e:
-        print(f"Une erreur inattendue est survenue lors de la vérification du jeton : {e}")
-        raise Exception("Bad credentials")
+        print(f"Erreur lors de la suppression : {e}")
+        raise HTTPException(status_code=500, detail="Erreur interne serveur")
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
