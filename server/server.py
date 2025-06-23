@@ -8,11 +8,10 @@ from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from pydantic import BaseModel
 
 app = FastAPI()
-origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Allows all origins
+    allow_origins=["https://fleurkernevez.github.io", "http://localhost:3000"]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
