@@ -59,7 +59,7 @@ const AdminLoginForm = () => {
             },
         });
 
-        const token = response.data;
+        const token = response.data.token;
         console.log(response.data)
 
         localStorage.setItem('adminToken', token);
