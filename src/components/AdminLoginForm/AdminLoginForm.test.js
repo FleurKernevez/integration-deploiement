@@ -56,7 +56,7 @@ it('active le bouton si le formulaire est valide', async () => {
 
   it('soumet le formulaire avec succès et stocke le token', async () => {
     const mockToken = 'fake-jwt-token';
-    axios.post.mockResolvedValue({ data: mockToken });
+    axios.post.mockResolvedValue({ data: { token: mockToken } });
     window.alert = jest.fn();
     delete window.location;
     window.location = { reload: jest.fn() };

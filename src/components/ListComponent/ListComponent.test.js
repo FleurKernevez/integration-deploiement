@@ -12,6 +12,8 @@ const mockUsers = [
 
 beforeEach(() => {
   jest.clearAllMocks();
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+
 });
 
 describe('ListComponent', () => {
