@@ -155,6 +155,7 @@ const FormComponent = () => {
               type={field === 'email' ? 'email' : field === 'dateOfBirth' ? 'date' : 'text'}
               id={field}
               name={field}
+              data-testid={`user-${field}`}
               value={formData[field]}
               onChange={handleInputChange}
               placeholder={fieldLabels[field]}

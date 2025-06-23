@@ -78,7 +78,7 @@ const ListComponent = () => {
         {registeredUsers.length > 0 ? (
           registeredUsers.map((user, index) => (
             <li key={user.id} className="registered-item" data-testid={`user-${user.id}`}>
-              <div className="registered-item-text">
+              <div className="registered-item-text" data-testid={`user-email-${user.id}`}> 
                 {`${user.firstName} ${user.lastName} - ${user.email}`}
               </div>
               <div className="registered-item-text">

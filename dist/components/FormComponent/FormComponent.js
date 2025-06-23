@@ -84,7 +84,6 @@ const FormComponent = () => {
   };
   const handleSubmit = e => {
     e.preventDefault();
-    console.log("Données du formulaire :", formData);
     if (isFormValid) {
       alert('Utilisateur enregistré avec succès!');
       setFormData({
