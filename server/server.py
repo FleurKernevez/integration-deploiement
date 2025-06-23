@@ -7,6 +7,9 @@ import jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from pydantic import BaseModel
 
+MY_SECRET = os.getenv("JWT_SECRET", "dev_secret_key")
+ALGORITHM = "HS256"
+
 app = FastAPI()
 
 app.add_middleware(
@@ -48,26 +51,40 @@ async def get_users():
     # Connexion à la base de données
 
 @app.post("/login")
-async def create_user(login: Login):
+async def login_user(login: Login):
     print("Reçu :", login.email, login.password)
-    conn = mysql.connector.connect(
-        database=os.getenv("MYSQL_DATABASE"),
-        user=os.getenv("MYSQL_USER"),
-        password=os.getenv("MYSQL_ROOT_PASSWORD"),
-        port=3306, 
-        host=os.getenv("MYSQL_HOST"))
-    cursor = conn.cursor()
-    email = login.email
-    password = login.password
-    sql_select_Query = "select * from admin WHERE email=\""+ str(email) +"\" AND password=\""+ str(password)+"\";"
-    cursor.execute(sql_select_Query)
-    # get all records
-    records = cursor.fetchall()
-    if cursor.rowcount > 0:
-        encoded_jwt = jwt.encode({'data': [{'email':email}]}, MY_SECRET, algorithm=ALGORITHM)
-        return encoded_jwt
-    else:
-        raise Exception("Bad credentials")
+
+    try:
+        conn = mysql.connector.connect(
+            database=os.getenv("MYSQL_DATABASE"),
+            user=os.getenv("MYSQL_USER"),
+            password=os.getenv("MYSQL_ROOT_PASSWORD"),
+            port=3306,
+            host=os.getenv("MYSQL_HOST")
+        )
+        cursor = conn.cursor()
+        email = login.email
+        password = login.password
+
+        # Requête sécurisée
+        sql_select_Query = "SELECT * FROM admin WHERE email = %s AND password = %s"
+        cursor.execute(sql_select_Query, (email, password))
+        records = cursor.fetchall()
+
+        # Vérifie si les identifiants sont bons
+        if cursor.rowcount > 0:
+            encoded_jwt = jwt.encode({'email': email}, MY_SECRET, algorithm=ALGORITHM)
+            return {"token": encoded_jwt}
+        else:
+            print("Échec login : identifiants incorrects")
+            raise HTTPException(status_code=401, detail="Identifiants incorrects")
+    except Exception as e:
+        print("Erreur serveur /login :", e)
+        raise HTTPException(status_code=500, detail="Erreur serveur")
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
 
 @app.get("/admins")
 async def get_admins():
