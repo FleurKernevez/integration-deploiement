@@ -13,7 +13,10 @@ const mockUsers = [
 beforeEach(() => {
   jest.clearAllMocks();
   jest.spyOn(console, 'error').mockImplementation(() => {});
+});
 
+afterEach(() => {
+  localStorage.clear();
 });
 
 describe('ListComponent', () => {
@@ -67,12 +70,12 @@ test('met à jour la liste quand "userAdded" est dispatché', async () => {
     expect(screen.getByText(/aucun utilisateur enregistré/i)).toBeInTheDocument();
   });
 
-  // 🔥 Déclenchement manuel de l'event
+  // Déclenchement manuel de l'event
   await act(async () => {
     window.dispatchEvent(new Event('userAdded'));
   });
 
-  // ✅ L'utilisateur doit maintenant apparaître
+  // L'utilisateur doit maintenant apparaître
   await waitFor(() => {
     const userItem = screen.getByTestId('user-1');
     expect(userItem).toBeInTheDocument();
@@ -82,31 +85,40 @@ test('met à jour la liste quand "userAdded" est dispatché', async () => {
 });
 
 test('supprime un utilisateur après clic sur le bouton', async () => {
+  localStorage.setItem('adminToken', 'fake-token');
+
   const mockUsers = [
     [1, 'Doe', 'John', 'john.doe@example.com', '1990-01-01', '75001', 'Paris'],
   ];
 
-  fetch
-    .mockResolvedValueOnce({
-      json: async () => ({
-        utilisateurs: mockUsers,
-      }),
-    })
-    .mockResolvedValueOnce({ ok: true }); // pour DELETE
+  // 1. GET initial
+  fetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({ utilisateurs: mockUsers }),
+  });
+
+  // 2. DELETE
+  fetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({}),
+  });
+
+  // 3. GET après suppression
+  fetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({ utilisateurs: [] }),
+  });
 
   window.alert = jest.fn();
 
   render(<ListComponent />);
 
-  // S'assurer que l'utilisateur est affiché
   const userItem = await screen.findByTestId('user-1');
   expect(userItem).toBeInTheDocument();
 
-  // Clic sur le bon bouton
   const deleteButton = screen.getByRole('button', { name: /Supprimer John Doe/i });
   fireEvent.click(deleteButton);
 
-  // Attente de la suppression
   await waitFor(() => {
     expect(window.alert).toHaveBeenCalledWith('Utilisateur supprimé avec succès !');
     expect(screen.queryByTestId('user-1')).not.toBeInTheDocument();
@@ -114,6 +126,7 @@ test('supprime un utilisateur après clic sur le bouton', async () => {
 });
 
   test('affiche une alerte si la suppression échoue', async () => {
+  
   const mockUsers = [
     [1, 'Doe', 'John', 'john.doe@example.com', '1990-01-01', '75001', 'Paris'],
   ];
@@ -125,7 +138,7 @@ test('supprime un utilisateur après clic sur le bouton', async () => {
     .mockResolvedValueOnce({ ok: false }); // DELETE échoue
 
   window.alert = jest.fn();
-
+  localStorage.setItem('adminToken', 'fake-token');
   render(<ListComponent />);
 
   // S'assurer que l'utilisateur est bien affiché
