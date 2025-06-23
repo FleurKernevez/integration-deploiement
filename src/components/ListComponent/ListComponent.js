@@ -22,11 +22,24 @@ const ListComponent = () => {
         city: userArray[6],
     }));
 
+      setUsersCount(formattedUsers.length);
       setRegisteredUsers(formattedUsers)
     }
     getUsers();
+
+    const handleUserAdded = () => {
+      getUsers();
+    };
+
+    window.addEventListener('userAdded', handleUserAdded);
+
+    return () => {
+      window.removeEventListener('userAdded', handleUserAdded);
+    };
   }
   , []);
+
+
 
   const handleDeleteUser = async (id) => {
     try {
@@ -46,6 +59,7 @@ const ListComponent = () => {
       alert('Erreur lors de la suppression de l’utilisateur.');
     }
   };
+  
 
   return (
     <div className="registered-list">
@@ -55,7 +69,7 @@ const ListComponent = () => {
       <ul className="list-none p-0">
         {registeredUsers.length > 0 ? (
           registeredUsers.map((user, index) => (
-            <li key={index} className="registered-item">
+            <li key={user.id} className="registered-item" data-testid={`user-${user.id}`}>
               <div className="registered-item-text">
                 {`${user.firstName} ${user.lastName} - ${user.email}`}
               </div>
@@ -65,7 +79,8 @@ const ListComponent = () => {
               <div className="registered-item-text">
                 {`id: ${user.id}`}
               </div>
-              <button 
+              <button
+                data-testid={`delete-${user.id}`}
                 className="registered-item-text"
                 onClick={() => handleDeleteUser(user.id)}
               >
