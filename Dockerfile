@@ -1,4 +1,3 @@
-FROM mysql:latest
-ENV MYSQL_ROOT_PASSWORD ynovpwd
-COPY ./sqlfiles/migrate-v001.sql /docker-entrypoint-initdb.d
+FROM mysql:9.3
+COPY ./sqlfiles /docker-entrypoint-initdb.d
 EXPOSE 3306
