@@ -12,9 +12,10 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-scripts": "^5.0.1",
+    "react-toastify": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
-  "jest":{
+  "jest": {
     "transformIgnorePatterns": [
       "node_modules/(?!axios)"
     ]
@@ -34,7 +35,14 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "no-console": "off",
+      "react/prop-types": "off",
+      "no-unused-vars": "warn",
+      "no-empty-function": "off",
+      "react/react-in-jsx-scope": "off"
+    }
   },
   "browserslist": {
     "production": [

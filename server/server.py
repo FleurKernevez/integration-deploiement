@@ -177,3 +177,5 @@ async def deleteUser(id: str, authorization: Optional[str] = Header(None)):
         if conn.is_connected():
             cursor.close()
             conn.close()
+
+

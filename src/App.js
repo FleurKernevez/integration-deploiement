@@ -3,6 +3,7 @@ import React from 'react';
 import FormComponent from './components/FormComponent/FormComponent';
 import ListComponent from './components/ListComponent/ListComponent';
 import AdminLoginForm from './components/AdminLoginForm/AdminLoginForm';
+import Post from './components/Post/Post';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <h1>Mon formulaire</h1>
       <FormComponent />
       <ListComponent />
+      <Post />
     </div>
   );
 }

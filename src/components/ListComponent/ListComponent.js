@@ -11,7 +11,7 @@ const ListComponent = () => {
     const getUsers = async () => {
       const fetchData = await fetch(`${process.env.REACT_APP_SERVER_URL}/users`)
       const data = await fetchData.json();
-      const response = data.utilisateurs;
+      const response = data && data.utilisateurs ? data.utilisateurs : [];
       setUsersCount(response.length);
 
       const formattedUsers = response.map(userArray => ({
@@ -61,7 +61,7 @@ const ListComponent = () => {
         // Refresh ou remove from state
         window.dispatchEvent(new Event("userAdded")); // ou re-fetch users
       } else {
-        alert("Erreur lors de la suppression de l’utilisateur.");
+        alert("Erreur lors de la suppression de l'utilisateur.");
       }
     } catch (error) {
       console.error("Erreur delete :", error);

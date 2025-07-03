@@ -1,6 +1,12 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import FormComponent from './FormComponent';
 import axios from 'axios';
+import {
+  validateName,
+  validateEmail,
+  validateDateOfBirth,
+  validatePostalCode,
+} from '../../services/CheckForm/CheckForm';
 
 // MOCK axios
 jest.mock('axios');
@@ -17,13 +23,6 @@ jest.mock('../../services/CheckForm/CheckForm', () => ({
   validateDateOfBirth: jest.fn(() => true),
   validatePostalCode: jest.fn(() => true),
 }));
-
-import {
-  validateName,
-  validateEmail,
-  validateDateOfBirth,
-  validatePostalCode,
-} from '../../services/CheckForm/CheckForm';
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -58,11 +57,8 @@ it('devrait activer le bouton quand tous les champs sont valides', async () => {
   fireEvent.change(screen.getByLabelText(/ville/i), { target: { value: 'Paris' } });
   fireEvent.change(screen.getByLabelText(/code postal/i), { target: { value: '75000' } });
 
-  await waitFor(() => {
-    expect(screen.getByRole('button', { name: /enregistrer/i })).toBeEnabled();
-  });
+  await waitFor(() => expect(screen.getByRole('button', { name: /enregistrer/i })).toBeEnabled());
 });
-
 
 it('devrait afficher un toaster et vider les champs après la soumission', async () => {
   // Mocks essentiels
@@ -83,12 +79,9 @@ it('devrait afficher un toaster et vider les champs après la soumission', async
 
   fireEvent.click(screen.getByRole('button', { name: /enregistrer/i }));
 
-  await waitFor(() => {
-    expect(window.alert).toHaveBeenCalledWith('Utilisateur enregistré avec succès!');
-    expect(screen.getByLabelText('Prénom').value).toBe('');
-  });
+  await waitFor(() => expect(window.alert).toHaveBeenCalledWith('Utilisateur enregistré avec succès!'));
+  expect(screen.getByLabelText('Prénom').value).toBe('');
 });
-
 
 describe('Formulaire', () => {
   it('devrait afficher les erreurs si les champs sont invalides', async () => {
@@ -141,8 +134,8 @@ it('devrait ajouter un utilisateur dans le localStorage après soumission', asyn
   await waitFor(() => {
     const storedData = localStorage.getItem('formData');
     expect(storedData).not.toBeNull();
-    const parsed = JSON.parse(storedData);
-    expect(parsed.email).toBe('lucie@example.com');
   });
+  const parsed = JSON.parse(localStorage.getItem('formData'));
+  expect(parsed.email).toBe('lucie@example.com');
 });
 

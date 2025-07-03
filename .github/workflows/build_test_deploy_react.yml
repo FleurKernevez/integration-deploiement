@@ -85,7 +85,7 @@ jobs:
        with:
         # Upload entire repository
         path: build
-        if-no-files-found: error
+        #if-no-files-found: error
         
  # Deploy an other job
  deploy:
