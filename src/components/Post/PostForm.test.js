@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PostForm from './PostForm';
+import { ToastContainer } from 'react-toastify';
 
 // Mock global fetch
 global.fetch = jest.fn();
@@ -21,27 +22,40 @@ describe('PostForm', () => {
   it('permet de saisir et soumettre un post', async () => {
     const onPostCreated = jest.fn();
     fetch.mockResolvedValueOnce({ ok: true });
-    render(<PostForm onPostCreated={onPostCreated} />);
+
+    render(
+      <>
+        <PostForm onPostCreated={onPostCreated} />
+        <ToastContainer />
+      </>
+    );
+
     fireEvent.change(screen.getByPlaceholderText('Titre'), { target: { value: 'Test titre' } });
     fireEvent.change(screen.getByPlaceholderText('Contenu'), { target: { value: 'Test contenu' } });
     fireEvent.change(screen.getByPlaceholderText('Auteur'), { target: { value: 'Jean' } });
     fireEvent.click(screen.getByRole('button', { name: /publier/i }));
+
     await waitFor(() => {
       expect(onPostCreated).toHaveBeenCalled();
     });
   });
 
   it('affiche un message d\'erreur si la création de post échoue', async () => {
-    // Mock d'une réponse échouée
     fetch.mockResolvedValueOnce({ ok: false });
 
-    render(<PostForm />);
+    render(
+      <>
+        <PostForm />
+        <ToastContainer />
+      </>
+    );
 
     fireEvent.change(screen.getByPlaceholderText('Titre'), { target: { value: 'Titre erreur' } });
     fireEvent.change(screen.getByPlaceholderText('Contenu'), { target: { value: 'Contenu erreur' } });
     fireEvent.change(screen.getByPlaceholderText('Auteur'), { target: { value: 'Auteur erreur' } });
     fireEvent.click(screen.getByRole('button', { name: /publier/i }));
 
+    // Vérification du toast d'erreur
     await waitFor(() => {
       expect(screen.getByText(/Erreur lors de la création du post/i)).toBeInTheDocument();
     });
@@ -50,7 +64,12 @@ describe('PostForm', () => {
   it('soumet sans planter même si onPostCreated est undefined', async () => {
     fetch.mockResolvedValueOnce({ ok: true });
 
-    render(<PostForm />);
+    render(
+      <>
+        <PostForm />
+        <ToastContainer />
+      </>
+    );
 
     fireEvent.change(screen.getByPlaceholderText('Titre'), { target: { value: 'Test sans callback' } });
     fireEvent.change(screen.getByPlaceholderText('Contenu'), { target: { value: 'Contenu sans callback' } });
@@ -62,5 +81,4 @@ describe('PostForm', () => {
       expect(fetch).toHaveBeenCalled();
     });
   });
-
-}); 
+});
