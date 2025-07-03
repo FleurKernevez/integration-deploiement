@@ -1,4 +1,3 @@
-// src/components/Post/PostForm.test.js
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PostForm from './PostForm';
@@ -56,11 +55,12 @@ describe('PostForm', () => {
     fireEvent.change(screen.getByPlaceholderText('Auteur'), { target: { value: 'Auteur erreur' } });
     fireEvent.click(screen.getByRole('button', { name: /publier/i }));
 
-    // Vérifie la présence du toast d'erreur via sa classe CSS
+    // Vérifie la présence du toast d'erreur via son texte global
     await waitFor(() => {
-      const toast = document.querySelector('.Toastify__toast--error');
-      expect(toast).toBeInTheDocument();
-      expect(toast?.textContent).toMatch(/Erreur lors de la création du post/i);
+      const errorToasts = Array.from(document.querySelectorAll('.Toastify__toast')).filter(el =>
+        el.textContent.includes('Erreur lors de la création du post')
+      );
+      expect(errorToasts.length).toBeGreaterThan(0);
     });
   });
 

@@ -36,4 +36,4 @@ describe('fetchPosts', () => {
 
     await expect(fetchPosts()).rejects.toThrow('Erreur lors de la récupération des posts');
   });
-}); 
+});

@@ -5,11 +5,10 @@ import * as postService from './postService';
 import userEvent from '@testing-library/user-event';
 
 jest.mock('react-toastify/dist/ReactToastify.css', () => ({}));
-
 jest.mock('./postService');
 
-// Mock simplifié de PostForm pour déclencher onPostCreated
-jest.mock('./PostForm', () => (props) => (
+// Mock simplifié de PostForm
+jest.mock('./PostForm.js', () => (props) => (
   <button data-testid="mock-postform" onClick={props.onPostCreated}>
     Mock PostForm
   </button>
@@ -49,7 +48,7 @@ describe('Post component', () => {
     }
   });
 
-  test('Affiche un message si aucun post n\'est présent', async () => {
+  test("Affiche un message si aucun post n'est présent", async () => {
     postService.fetchPosts.mockResolvedValueOnce({ posts: [] });
 
     render(<Post />);
@@ -77,7 +76,6 @@ describe('Post component', () => {
 
     render(<Post />);
 
-    // Attente du premier appel
     await waitFor(() => {
       expect(postService.fetchPosts).toHaveBeenCalledTimes(1);
     });
@@ -85,7 +83,6 @@ describe('Post component', () => {
     const postFormButton = screen.getByTestId('mock-postform');
     await userEvent.click(postFormButton);
 
-    // Vérification de l’appel après création
     await waitFor(() => {
       expect(postService.fetchPosts).toHaveBeenCalledTimes(2);
     });
