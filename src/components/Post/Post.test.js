@@ -4,10 +4,11 @@ import Post from './Post';
 import * as postService from './postService';
 import userEvent from '@testing-library/user-event';
 
-jest.mock('react-toastify/dist/ReactToastify.css', () => {});
+jest.mock('react-toastify/dist/ReactToastify.css', () => ({}));
 
 jest.mock('./postService');
 
+// Mock simplifié de PostForm pour déclencher onPostCreated
 jest.mock('./PostForm', () => (props) => (
   <button data-testid="mock-postform" onClick={props.onPostCreated}>
     Mock PostForm
@@ -40,18 +41,12 @@ describe('Post component', () => {
 
     render(<Post />);
 
-    await waitFor(() => {
-      expect(screen.getByText('Post 1')).toBeInTheDocument();
-    });
-    await waitFor(() => {
-      expect(screen.getByText('Content 1')).toBeInTheDocument();
-    });
-    await waitFor(() => {
-      expect(screen.getByText('Post 2')).toBeInTheDocument();
-    });
-    await waitFor(() => {
-      expect(screen.getByText('Content 2')).toBeInTheDocument();
-    });
+    for (const post of mockPosts) {
+      await waitFor(() => {
+        expect(screen.getByText(post.title)).toBeInTheDocument();
+        expect(screen.getByText(post.content)).toBeInTheDocument();
+      });
+    }
   });
 
   test('Affiche un message si aucun post n\'est présent', async () => {
@@ -82,13 +77,15 @@ describe('Post component', () => {
 
     render(<Post />);
 
+    // Attente du premier appel
     await waitFor(() => {
       expect(postService.fetchPosts).toHaveBeenCalledTimes(1);
     });
 
-    const button = screen.getByTestId('mock-postform');
-    await userEvent.click(button);
+    const postFormButton = screen.getByTestId('mock-postform');
+    await userEvent.click(postFormButton);
 
+    // Vérification de l’appel après création
     await waitFor(() => {
       expect(postService.fetchPosts).toHaveBeenCalledTimes(2);
     });
