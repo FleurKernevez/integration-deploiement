@@ -1,3 +1,4 @@
+// src/components/Post/PostForm.test.js
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PostForm from './PostForm';
@@ -40,7 +41,7 @@ describe('PostForm', () => {
     });
   });
 
-  it('affiche un message d\'erreur si la création de post échoue', async () => {
+  it("affiche un message d'erreur si la création de post échoue", async () => {
     fetch.mockResolvedValueOnce({ ok: false });
 
     render(
@@ -55,13 +56,15 @@ describe('PostForm', () => {
     fireEvent.change(screen.getByPlaceholderText('Auteur'), { target: { value: 'Auteur erreur' } });
     fireEvent.click(screen.getByRole('button', { name: /publier/i }));
 
-    // Vérification du toast d'erreur
+    // Vérifie la présence du toast d'erreur via sa classe CSS
     await waitFor(() => {
-      expect(screen.getByText(/Erreur lors de la création du post/i)).toBeInTheDocument();
+      const toast = document.querySelector('.Toastify__toast--error');
+      expect(toast).toBeInTheDocument();
+      expect(toast?.textContent).toMatch(/Erreur lors de la création du post/i);
     });
   });
 
-  it('soumet sans planter même si onPostCreated est undefined', async () => {
+  it("soumet sans planter même si onPostCreated est undefined", async () => {
     fetch.mockResolvedValueOnce({ ok: true });
 
     render(
