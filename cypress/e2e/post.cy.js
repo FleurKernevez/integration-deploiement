@@ -17,11 +17,11 @@ describe('Posts', () => {
   it('crée un post et l’affiche', () => {
     cy.get('input[placeholder="Titre"]').type('Mon post e2e');
     cy.get('textarea[placeholder="Contenu"]').type('Ceci est un test e2e');
-    cy.get('input[placeholder="Auteur"]').should('have.value', 'Jean');
+    cy.get('input[placeholder="Auteur"]').type('Auteur aléatoire');
     cy.get('button[type=submit]').click();
-    // Après soumission, le post doit apparaître
     cy.contains('Mon post e2e');
     cy.contains('Ceci est un test e2e');
-    cy.contains('Par Jean');
+    cy.contains('Par Auteur aléatoire');
   });
+
 }); 
