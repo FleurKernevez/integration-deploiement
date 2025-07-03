@@ -56,12 +56,8 @@ describe('PostForm', () => {
     fireEvent.click(screen.getByRole('button', { name: /publier/i }));
 
     // Vérifie la présence du toast d'erreur via son texte global
-    await waitFor(() => {
-      const errorToasts = Array.from(document.querySelectorAll('.Toastify__toast')).filter(el =>
-        el.textContent.includes('Erreur lors de la création du post')
-      );
-      expect(errorToasts.length).toBeGreaterThan(0);
-    });
+    const toast = await screen.findByText(/Erreur lors de la création du post/i);
+    expect(toast).toBeInTheDocument();
   });
 
   it("soumet sans planter même si onPostCreated est undefined", async () => {
