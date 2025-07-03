@@ -4,15 +4,12 @@ import Post from './Post';
 import * as postService from './postService';
 import userEvent from '@testing-library/user-event';
 
-// Mock CSS externe (Toastify)
 jest.mock('react-toastify/dist/ReactToastify.css', () => {});
 
-// Mock du service fetchPosts
 jest.mock('./postService');
 
-// Mock du composant enfant PostForm
-jest.mock('./PostForm', () => ({ onPostCreated }) => (
-  <button data-testid="mock-postform" onClick={onPostCreated}>
+jest.mock('./PostForm', () => (props) => (
+  <button data-testid="mock-postform" onClick={props.onPostCreated}>
     Mock PostForm
   </button>
 ));
@@ -46,9 +43,15 @@ describe('Post component', () => {
     await waitFor(() => {
       expect(screen.getByText('Post 1')).toBeInTheDocument();
     });
-    expect(screen.getByText('Content 1')).toBeInTheDocument();
-    expect(screen.getByText('Post 2')).toBeInTheDocument();
-    expect(screen.getByText('Content 2')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Content 1')).toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.getByText('Post 2')).toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.getByText('Content 2')).toBeInTheDocument();
+    });
   });
 
   test('Affiche un message si aucun post n\'est présent', async () => {
@@ -61,7 +64,7 @@ describe('Post component', () => {
     });
   });
 
-  test('Gère les erreurs de récupération en affichant un toast', async () => {
+  test('Gère les erreurs de récupération en affichant un message', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     postService.fetchPosts.mockRejectedValueOnce(new Error('Erreur API'));
 
@@ -79,7 +82,6 @@ describe('Post component', () => {
 
     render(<Post />);
 
-    // Vérifie appel initial
     await waitFor(() => {
       expect(postService.fetchPosts).toHaveBeenCalledTimes(1);
     });
