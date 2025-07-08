@@ -25,9 +25,9 @@ jest.mock('../../services/CheckForm/CheckForm', () => ({
 beforeEach(() => {
   jest.clearAllMocks();
   localStorage.clear();
-  jest.spyOn(window, 'alert').mockImplementation(() => {});
-  jest.spyOn(window, 'dispatchEvent').mockImplementation(() => {});
-  jest.spyOn(console, 'error').mockImplementation(() => {});
+  jest.spyOn(window, 'alert').mockImplementation(() => { });
+  jest.spyOn(window, 'dispatchEvent').mockImplementation(() => { });
+  jest.spyOn(console, 'error').mockImplementation(() => { });
 });
 
 describe('FormComponent', () => {

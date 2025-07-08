@@ -10,10 +10,10 @@ jest.mock('../../services/CheckForm/CheckForm', () => ({
 }));
 
 describe('AdminLoginForm', () => {
-    beforeAll(() => {
-    jest.spyOn(console, 'log').mockImplementation(() => {});
-    jest.spyOn(console, 'error').mockImplementation(() => {});
-    });
+  beforeAll(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => { });
+    jest.spyOn(console, 'error').mockImplementation(() => { });
+  });
 
   beforeEach(() => {
     localStorage.clear();
@@ -41,18 +41,16 @@ describe('AdminLoginForm', () => {
     expect(screen.getByText(/mot de passe trop court/i)).toBeInTheDocument();
   });
 
-it('active le bouton si le formulaire est valide', async () => {
-  render(<AdminLoginForm />);
+  it('active le bouton si le formulaire est valide', async () => {
+    render(<AdminLoginForm />);
 
-  fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'admin@email.com' } });
-  fireEvent.change(screen.getByLabelText(/mot de passe/i), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'admin@email.com' } });
+    fireEvent.change(screen.getByLabelText(/mot de passe/i), { target: { value: 'password123' } });
 
-  await waitFor(() => {
-    expect(screen.getByRole('button', { name: /se connecter/i })).not.toBeDisabled();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /se connecter/i })).not.toBeDisabled();
+    });
   });
-});
-
-
 
   it('soumet le formulaire avec succès et stocke le token', async () => {
     const mockToken = 'fake-jwt-token';
