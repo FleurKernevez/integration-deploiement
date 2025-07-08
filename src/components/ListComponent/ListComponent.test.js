@@ -32,8 +32,10 @@ describe('ListComponent', () => {
     render(<ListComponent />);
 
     await waitFor(() => {
-      expect(screen.getByText(/John Doe - john.doe@example.com/)).toBeInTheDocument();
-      expect(screen.getByText(/Jane Smith - jane.smith@example.com/)).toBeInTheDocument();
+      expect(screen.getByTestId('user-email-1')).toHaveTextContent('John Doe - john.doe@example.com');
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('user-email-2')).toHaveTextContent('Jane Smith - jane.smith@example.com');
     });
 
     expect(screen.getByText('2 user(s) already registered')).toBeInTheDocument();
@@ -80,7 +82,13 @@ describe('ListComponent', () => {
     await waitFor(() => {
       const userItem = screen.getByTestId('user-1');
       expect(userItem).toBeInTheDocument();
+    });
+    await waitFor(() => {
+      const userItem = screen.getByTestId('user-1');
       expect(userItem).toHaveTextContent('John Doe');
+    });
+    await waitFor(() => {
+      const userItem = screen.getByTestId('user-1');
       expect(userItem).toHaveTextContent('john.doe@example.com');
     });
   });
@@ -112,7 +120,9 @@ describe('ListComponent', () => {
 
     await waitFor(() => {
       expect(window.alert).toHaveBeenCalledWith('Utilisateur supprimé avec succès !');
-      expect(screen.queryByTestId('user-1')).not.toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.queryByTestId('user-email-1')).not.toBeInTheDocument();
     });
   });
 
@@ -146,11 +156,6 @@ describe('ListComponent', () => {
         [1, 'Doe', 'John', 'john.doe@example.com', '1990-01-01', '75001', 'Paris']
       ] }) }); // après ajout
 
-    // Mock axios pour la création d'utilisateur
-    jest.mock('axios', () => ({
-      post: jest.fn().mockResolvedValue({ status: 200 }),
-    }));
-
     render(
       <>
         <FormComponent />
@@ -168,9 +173,14 @@ describe('ListComponent', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /enregistrer/i }));
 
+    // Simule l'événement qui déclenche le rechargement de la liste
+    act(() => {
+      window.dispatchEvent(new Event('userAdded'));
+    });
+
     // Vérifier que la liste se met à jour
     await waitFor(() => {
-      expect(screen.getByText(/John Doe - john.doe@example.com/)).toBeInTheDocument();
+      expect(screen.getByTestId('user-email-1')).toHaveTextContent('John Doe - john.doe@example.com');
     });
   });
 
@@ -190,11 +200,6 @@ describe('ListComponent', () => {
       .mockResolvedValueOnce({ ok: true, json: async () => ({}) }) // suppression
       .mockResolvedValueOnce({ json: async () => ({ utilisateurs: [] }) }); // après suppression
 
-    // Mock axios pour la création d'utilisateur
-    jest.mock('axios', () => ({
-      post: jest.fn().mockResolvedValue({ status: 200 }),
-    }));
-
     render(
       <>
         <FormComponent />
@@ -211,9 +216,14 @@ describe('ListComponent', () => {
     fireEvent.change(screen.getByTestId('user-postalCode'), { target: { value: '75001' } });
     fireEvent.click(screen.getByRole('button', { name: /enregistrer/i }));
 
+    // Simule l'événement qui déclenche le rechargement de la liste
+    act(() => {
+      window.dispatchEvent(new Event('userAdded'));
+    });
+
     // Vérifie que l'utilisateur apparaît dans la liste
     await waitFor(() => {
-      expect(screen.getByText(/John Doe - john.doe@example.com/)).toBeInTheDocument();
+      expect(screen.getByTestId('user-email-1')).toHaveTextContent('John Doe - john.doe@example.com');
     });
 
     // Suppression utilisateur
@@ -224,7 +234,7 @@ describe('ListComponent', () => {
       expect(window.alert).toHaveBeenCalledWith('Utilisateur supprimé avec succès !');
     });
     await waitFor(() => {
-      expect(screen.queryByText(/John Doe - john.doe@example.com/)).not.toBeInTheDocument();
+      expect(screen.queryByTestId('user-email-1')).not.toBeInTheDocument();
     });
   });
 
@@ -238,7 +248,7 @@ describe('ListComponent', () => {
     });
     render(<ListComponent />);
     await waitFor(() => {
-      expect(screen.getByText(/John Doe - john.doe@example.com/)).toBeInTheDocument();
+      expect(screen.getByTestId('user-email-1')).toHaveTextContent('John Doe - john.doe@example.com');
     });
     expect(screen.queryByRole('button', { name: /Supprimer John Doe/i })).not.toBeInTheDocument();
   });
